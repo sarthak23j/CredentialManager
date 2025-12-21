@@ -33,7 +33,8 @@
 @media (max-width: 600px) {
   .modal {
     padding: 1.5rem;
-    width: 95%;
+    width: calc(100% - 32px);
+    margin: 0 16px;
     border-radius: 16px;
   }
 }
