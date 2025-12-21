@@ -1,0 +1,88 @@
+.detail-modal {
+  border: 1px solid #444;
+}
+
+.detail-row.copyable {
+  margin-bottom: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  border: 1px solid transparent;
+}
+
+.detail-row.copyable:hover {
+  background: rgba(139, 92, 246, 0.08);
+  border-color: rgba(139, 92, 246, 0.3);
+  transform: scale(1.005);
+}
+
+.detail-row.copyable:active {
+  transform: scale(0.99);
+}
+
+.detail-row.copied {
+  border-color: #4ade80 !important;
+  background: rgba(74, 222, 128, 0.05) !important;
+}
+
+.detail-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.copy-indicator {
+  color: #555;
+  margin-left: 10px;
+  transition: all 0.1s;
+}
+
+.detail-row.copyable:hover .copy-indicator {
+  color: #8b5cf6;
+}
+
+.detail-key {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: #8b5cf6;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.detail-val {
+  font-size: 1.1rem;
+  font-family: monospace;
+  word-break: break-all;
+  color: #fff;
+  display: block;
+  margin-top: 4px;
+}
+
+.modal-footer {
+  margin-top: 2rem;
+  display: flex;
+  gap: 12px;
+}
+
+.edit-btn-large, .delete-btn-large {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: bold;
+}
+
+.edit-btn-large { background: #8b5cf6; color: white; }
+.delete-btn-large { background: #333; color: #ff4444; border: 1px solid #444; }
+
+.edit-btn-large svg, .delete-btn-large svg { display: block; }

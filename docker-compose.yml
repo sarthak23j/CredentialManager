@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: cm_mongodb
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+  backend:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: cm_backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/
+      - DB_NAME=CredentialManager
+    depends_on:
+      - mongodb
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cm_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80" 
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:

@@ -1,0 +1,58 @@
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px; /* Added to accommodate hover transform */
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #444;
+  margin-bottom: 1.5rem;
+  flex-shrink: 0;
+}
+
+.user-welcome {
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.user-welcome strong {
+  color: #8b5cf6;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-icon-btn {
+  background: transparent;
+  border: none;
+  color: #888;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.header-icon-btn:hover {
+  background: rgba(139, 92, 246, 0.15);
+  color: #8b5cf6;
+  transform: translateY(-3px);
+}
+
+.header-icon-btn.logout:hover {
+  background: rgba(255, 68, 68, 0.15);
+  color: #ff4444;
+}
+
+.header-icon-btn:active {
+  transform: scale(0.92);
+}
+
+.header-icon-btn svg {
+  display: block;
+}
