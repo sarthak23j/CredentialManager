@@ -69,6 +69,12 @@
   gap: 12px;
 }
 
+@media (max-width: 400px) {
+  .modal-footer {
+    flex-direction: column;
+  }
+}
+
 .edit-btn-large, .delete-btn-large {
   flex: 1;
   padding: 1rem;
