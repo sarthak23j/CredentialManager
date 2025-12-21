@@ -1,8 +1,7 @@
 services:
-    mongodb:
-        image: mongo:latest
-        container_name: cm_mongodb
-        restart: unless-stopped
+      mongodb:
+        image: mongo:4.4.18
+        container_name: cm_mongodb        restart: unless-stopped
         volumes:
             - mongo_data:/data/db
         ports:
