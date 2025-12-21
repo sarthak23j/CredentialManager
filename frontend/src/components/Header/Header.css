@@ -7,6 +7,7 @@ header {
   border-bottom: 1px solid #444;
   margin-bottom: 1.5rem;
   flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
 .user-welcome {
@@ -22,6 +23,23 @@ header {
   display: flex;
   align-items: center;
   gap: 15px;
+}
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+    text-align: center;
+  }
+  
+  .user-welcome {
+    font-size: 1.25rem;
+  }
+  
+  .header-actions {
+    justify-content: center;
+  }
 }
 
 .header-icon-btn {
