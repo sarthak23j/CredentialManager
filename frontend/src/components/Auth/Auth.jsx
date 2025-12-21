@@ -4,19 +4,17 @@ import { login, register } from '../../api'; // Adjusted import path
 import InputGroup from '../ui/InputGroup';
 import './Auth.css';
 
-const Auth = ({ onLoginSuccess }) => {
+const Auth = ({ onLoginSuccess, showToast }) => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
     try {
       if (isRegistering) {
         const response = await register(username, password);
-        setMessage(response.data.message);
+        showToast(response.data.message, "success");
         setIsRegistering(false);
       } else {
         const response = await login(username, password);
@@ -25,7 +23,7 @@ const Auth = ({ onLoginSuccess }) => {
         }
       }
     } catch (error) {
-      setMessage(error.response?.data?.message || "Authentication failed");
+      showToast(error.response?.data?.message || "Authentication failed", "error");
     }
   };
 
@@ -55,7 +53,6 @@ const Auth = ({ onLoginSuccess }) => {
             {isRegistering ? 'Sign Up' : 'Log In'}
           </button>
         </form>
-        {message && <p className="status-msg">{message}</p>}
         <button 
           className="secondary-btn" 
           onClick={() => setIsRegistering(!isRegistering)}

@@ -4,7 +4,7 @@ import { updateCredential } from '../../../api';
 import '../Modal.css';
 import './EditModal.css';
 
-const EditModal = ({ username, credential, onClose, onUpdateSuccess }) => {
+const EditModal = ({ username, credential, onClose, onUpdateSuccess, showToast }) => {
   const [inputFields, setInputFields] = useState(
     Object.entries(credential.data).map(([key, value]) => ({ key, value }))
   );
@@ -41,7 +41,7 @@ const EditModal = ({ username, credential, onClose, onUpdateSuccess }) => {
         onClose();
       }
     } catch (error) {
-      alert("Error updating credential");
+      if (showToast) showToast("Error updating credential", "error");
     }
   };
 

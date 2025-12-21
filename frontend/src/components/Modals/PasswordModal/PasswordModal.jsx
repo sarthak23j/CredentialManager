@@ -5,7 +5,7 @@ import InputGroup from '../../ui/InputGroup';
 import '../Modal.css';
 import './PasswordModal.css';
 
-const PasswordModal = ({ username, onClose }) => {
+const PasswordModal = ({ username, onClose, showToast }) => {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
@@ -13,10 +13,14 @@ const PasswordModal = ({ username, onClose }) => {
     e.preventDefault();
     try {
       const response = await changePassword(username, oldPassword, newPassword);
-      alert(response.data.message);
-      if (response.data.success) onClose();
+      if (response.data.success) {
+        showToast(response.data.message, "success");
+        onClose();
+      } else {
+        showToast(response.data.message, "error");
+      }
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to change password");
+      showToast(error.response?.data?.message || "Failed to change password", "error");
     }
   };
 

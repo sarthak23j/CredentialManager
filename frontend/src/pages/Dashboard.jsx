@@ -10,7 +10,7 @@ import ImportModal from '../components/Modals/ImportModal/ImportModal';
 import PasswordModal from '../components/Modals/PasswordModal/PasswordModal';
 import './Dashboard.css';
 
-const Dashboard = ({ user, onLogout }) => {
+const Dashboard = ({ user, onLogout, showToast }) => {
   const [credentials, setCredentials] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -37,9 +37,14 @@ const Dashboard = ({ user, onLogout }) => {
   };
 
   const handleDelete = async (svc) => {
-    await deleteCredential(user, svc);
-    setViewingCred(null);
-    fetchCredentials();
+    try {
+      await deleteCredential(user, svc);
+      showToast(`Deleted ${svc}`, 'success');
+      setViewingCred(null);
+      fetchCredentials();
+    } catch (e) {
+      showToast('Failed to delete', 'error');
+    }
   };
 
   const handleEdit = (cred) => {
@@ -48,7 +53,7 @@ const Dashboard = ({ user, onLogout }) => {
   };
 
   const handleExport = () => {
-    if (credentials.length === 0) return alert("No data to export");
+    if (credentials.length === 0) return showToast("No data to export", "error");
     const allKeys = new Set();
     credentials.forEach(c => Object.keys(c.data).forEach(k => allKeys.add(k)));
     const headers = ['service', ...Array.from(allKeys)];
@@ -69,6 +74,7 @@ const Dashboard = ({ user, onLogout }) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    showToast("Export started!", "success");
   };
 
   return (
@@ -86,13 +92,13 @@ const Dashboard = ({ user, onLogout }) => {
       
       <CredentialGrid credentials={credentials} onItemClick={setViewingCred} />
 
-      {showPasswordModal && <PasswordModal username={user} onClose={() => setShowPasswordModal(false)} />}
+      {showPasswordModal && <PasswordModal username={user} onClose={() => setShowPasswordModal(false)} showToast={showToast} />}
       
       {showAddModal && (
         <AddModal 
           user={user} 
           onClose={() => setShowAddModal(false)} 
-          onSuccess={fetchCredentials} 
+          onSuccess={() => { fetchCredentials(); showToast("Credential added!"); }}
         />
       )}
 
@@ -101,6 +107,7 @@ const Dashboard = ({ user, onLogout }) => {
           username={user}
           onClose={() => setShowImportModal(false)}
           onSuccess={fetchCredentials}
+          showToast={showToast}
         />
       )}
 
@@ -118,7 +125,8 @@ const Dashboard = ({ user, onLogout }) => {
           username={user} 
           credential={editingCred} 
           onClose={() => setEditingCred(null)} 
-          onUpdateSuccess={fetchCredentials} 
+          onUpdateSuccess={() => { fetchCredentials(); showToast("Updated successfully!"); }}
+          showToast={showToast}
         />
       )}
     </div>

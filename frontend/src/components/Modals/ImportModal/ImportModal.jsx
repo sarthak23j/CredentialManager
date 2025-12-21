@@ -4,7 +4,7 @@ import { importCredentials } from '../../../api';
 import '../Modal.css';
 import './ImportModal.css';
 
-const ImportModal = ({ username, onClose, onSuccess }) => {
+const ImportModal = ({ username, onClose, onSuccess, showToast }) => {
   const [loading, setLoading] = useState(false);
 
   const handleFileChange = async (e) => {
@@ -24,17 +24,17 @@ const ImportModal = ({ username, onClose, onSuccess }) => {
         } else if (file.name.endsWith('.csv')) {
           parsedData = parseCSV(content);
         } else {
-          alert("Please upload a .json or .csv file");
+          showToast("Please upload a .json or .csv file", "error");
           setLoading(false);
           return;
         }
 
         const res = await importCredentials(username, parsedData);
-        alert(`Successfully imported ${res.data.count} credentials!`);
+        showToast(`Successfully imported ${res.data.count} credentials!`, "success");
         onSuccess();
         onClose();
       } catch (err) {
-        alert("Error parsing file. Ensure format is correct.");
+        showToast("Error parsing file. Ensure format is correct.", "error");
         console.error(err);
       } finally {
         setLoading(false);
