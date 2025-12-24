@@ -5,6 +5,8 @@ services:
         restart: unless-stopped
         volumes:
             - mongo_data:/data/db
+        ports:
+            - '27017:27017'
         networks:
             - proxy
 
@@ -14,15 +16,15 @@ services:
             dockerfile: Dockerfile
         container_name: cm_backend
         restart: unless-stopped
-        expose:
-            - '5000'
+        ports:
+            - '5000:5000'
+        networks:
+            - proxy
         environment:
-            - MONGODB_URI=mongodb://cm_mongodb:27017/
+            - MONGODB_URI=mongodb://mongodb:27017/
             - DB_NAME=CredentialManager
         depends_on:
             - mongodb
-        networks:
-            - proxy
 
     frontend:
         build:
@@ -30,26 +32,12 @@ services:
             dockerfile: Dockerfile
         container_name: cm_frontend
         restart: unless-stopped
-        expose:
-            - '80'
-        depends_on:
-            - backend
-        networks:
-            - proxy
-
-    reverse-proxy:
-        image: nginx:alpine
-        container_name: cm_proxy
-        restart: unless-stopped
         ports:
-            - '80:80'
-        volumes:
-            - ./proxy-nginx:/etc/nginx/conf.d:ro
-        depends_on:
-            - frontend
-            - backend
+            - '3000:80'
         networks:
             - proxy
+        depends_on:
+            - backend
 
 volumes:
     mongo_data:
