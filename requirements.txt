@@ -1,5 +1,5 @@
 flask
 flask-cors
-pymongo
+sqlalchemy
 python-dotenv
 bcrypt

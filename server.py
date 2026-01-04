@@ -45,9 +45,6 @@ def change_pw():
 def get_creds(username):
     # In a real app, you'd verify a token here for security
     creds = ca.viewAllCredentials(username)
-    # Remove MongoDB '_id' object because it's not JSON serializable
-    for c in creds:
-        c['_id'] = str(c['_id'])
     return jsonify(creds)
 
 @app.route('/api/credentials', methods=['POST'])
@@ -65,8 +62,6 @@ def search_cred():
     username = data.get('username')
     query = data.get('query')
     creds = ca.findCredential(username, query)
-    for c in creds:
-        c['_id'] = str(c['_id'])
     return jsonify(creds)
 
 @app.route('/api/credentials/delete', methods=['DELETE'])

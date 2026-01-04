@@ -1,58 +1,66 @@
 import bcrypt
-import os
-from pymongo import MongoClient
-from dotenv import load_dotenv
+from database import get_session, User, init_db
 
-load_dotenv()
-
-MONGODB_URI = os.getenv('MONGODB_URI', 'mongodb://localhost:27017/')
-DB_NAME = os.getenv('DB_NAME', 'CredentialManager')
-
-client = MongoClient(MONGODB_URI)
-db = client[DB_NAME]
-users = db['Users']
+# Ensure tables exist
+init_db()
 
 # CREATE A NEW USER 
 def create_user(username, password):
-    if users.find_one({"username": username}):
-        return "user already exists!"
-    
-    salt = bcrypt.gensalt()
-    passhash = bcrypt.hashpw(password.encode('utf-8'), salt)
-    
-    userObj = {
-        'username': username,
-        'password': passhash
-    }
-    
-    result = users.insert_one(userObj)
-    return f"user created, id: {result.inserted_id}"
+    session = get_session()
+    try:
+        if session.query(User).filter_by(username=username).first():
+            return "user already exists!"
+        
+        salt = bcrypt.gensalt()
+        passhash = bcrypt.hashpw(password.encode('utf-8'), salt)
+        
+        # Store as string in DB
+        new_user = User(username=username, password=passhash.decode('utf-8'))
+        session.add(new_user)
+        session.commit()
+        return f"user created, id: {new_user.id}"
+    finally:
+        session.close()
 
 # CONFIRMS LOGIN
 def check_user(username, password):
-    user = users.find_one({"username": username})
-    if not user:
-        return False, "Username not found."
-    
-    if bcrypt.checkpw(password.encode('utf-8'), user['password']):
-        return True, username
-    else:
-        return False, "Incorrect password."
+    session = get_session()
+    try:
+        user = session.query(User).filter_by(username=username).first()
+        if not user:
+            return False, "Username not found."
+        
+        # Encode string back to bytes for bcrypt
+        stored_hash = user.password.encode('utf-8')
+        
+        if bcrypt.checkpw(password.encode('utf-8'), stored_hash):
+            return True, username
+        else:
+            return False, "Incorrect password."
+    finally:
+        session.close()
 
 # CHANGE PASSWORD
 def change_password(username, old_password, new_password):
-    user = users.find_one({"username": username})
-    if not user:
-        return False, "User not found."
-    
-    if not bcrypt.checkpw(old_password.encode('utf-8'), user['password']):
-        return False, "Current password incorrect."
-    
-    salt = bcrypt.gensalt()
-    new_passhash = bcrypt.hashpw(new_password.encode('utf-8'), salt)
-    
-    users.update_one({"username": username}, {"$set": {"password": new_passhash}})
-    return True, "Password updated successfully!"
+    session = get_session()
+    try:
+        user = session.query(User).filter_by(username=username).first()
+        if not user:
+            return False, "User not found."
+        
+        stored_hash = user.password.encode('utf-8')
+        
+        if not bcrypt.checkpw(old_password.encode('utf-8'), stored_hash):
+            return False, "Current password incorrect."
+        
+        salt = bcrypt.gensalt()
+        new_passhash = bcrypt.hashpw(new_password.encode('utf-8'), salt)
+        
+        user.password = new_passhash.decode('utf-8')
+        session.commit()
+        return True, "Password updated successfully!"
+    finally:
+        session.close()
 
 #MAIN LOOP
 if __name__ == "__main__":
